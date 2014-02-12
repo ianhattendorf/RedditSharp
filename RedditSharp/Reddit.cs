@@ -99,6 +99,31 @@ namespace RedditSharp
             return User;
         }
 
+        /// <summary>
+        /// Log in using the supplied cookie.
+        /// </summary>
+        /// <param name="cookie">The cookie holding reddit session information.</param>
+        /// <returns>The authenticated reddit user.</returns>
+        public AuthenticatedUser LogIn(Cookie cookie)
+        {
+            var cookies = new CookieContainer();
+            cookies.Add(cookie);
+            _webAgent.Cookies = cookies;
+            GetMe();
+            return User;
+        }
+
+        /// <summary>
+        /// Gets the cookie holding reddit session information.
+        /// </summary>
+        /// <returns>Cookie holding reddit session information.</returns>
+        public Cookie GetAuthCookie()
+        {
+            foreach (Cookie cook in _webAgent.Cookies.GetCookies(new Uri("http://reddit.com/")))
+                return cook;
+            return new Cookie();
+        }
+
         public RedditUser GetUser(string name)
         {
             var request = _webAgent.CreateGet(string.Format(UserInfoUrl, name));
